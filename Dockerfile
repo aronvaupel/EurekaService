@@ -5,13 +5,19 @@ FROM gradle:8.10.2-jdk21 AS build
 ARG GITHUB_USERNAME
 ARG GITHUB_TOKEN
 
+# Ensure Git is installed in the Gradle image
+RUN apt-get update && apt-get install -y git
+
 # Clone the repository using GitHub credentials with shallow clone (--depth 1)
 RUN git clone --depth 1 https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/aronvaupel/EurekaService.git /home/gradle/src
 
 WORKDIR /home/gradle/src
 
-# Build the project
-RUN gradle build --no-daemon
+# Ensure necessary Gradle wrapper and files have execution permissions
+RUN chmod +x gradlew
+
+# Build the project with Gradle
+RUN ./gradlew clean build --no-daemon
 
 # Stage 2: Create a smaller image for running the application
 FROM eclipse-temurin:21-jdk-alpine
