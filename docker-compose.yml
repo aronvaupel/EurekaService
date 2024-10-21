@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  eureka-server:
+    image: eurekaserver:latest
+    build:
+      context: .
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-network
+    environment:
+      EUREKA_INSTANCE_HOSTNAME: eureka-server
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+      EUREKA_CLIENT_FETCH_REGISTRY: "false"
+
+networks:
+  microservices-network:
+    external: true
